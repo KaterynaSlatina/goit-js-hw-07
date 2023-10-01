@@ -15,22 +15,38 @@ function createMarkup(arr) {
     </li>`).join('');
 }
 
-   
+   const instance = basicLightbox.create(`
+    <img src="" alt="" width = 1000 height = auto>`,
+       {
+           onShow: () => window.addEventListener('keydown', onEscape),
+           onClose: () => window.addEventListener('keydown', onEscape),
+       }
+       
+     );
+       
 
 
 function handlerClick(evt) {
     evt.preventDefault();
     // console.log(evt);
 
-    if (!evt.target.classList.contains('.gallery__image')) {
-        return
-    } else {
-     const instance = basicLightbox.create(`
-    <img src="" alt="" width = 1000 height = auto>`,
-        
-     );
-        instance.show();
-    }
+    const dataSource = evt.target.dataset.source;
+    if (!dataSource)
+        return;
 
-
+    instance.element().querySelector('img').src = dataSource;
+    
+    instance.show();
+    document.addEventListener('keydown', onEscape);   
  }
+
+
+function onEscape(evt) {
+    if (evt.code !== "Escape")
+        return
+    
+    instance.close();
+
+    document.removeEventListener('keydown', onEscape);
+ }
+
